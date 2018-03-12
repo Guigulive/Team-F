@@ -42,7 +42,7 @@ contract Payroll {
     }
     
     function getPaid() public {
-        require(msg.sender == owner);
+        require(msg.sender == employee);
         uint nextPayday = lastPayday + payDuration;
         assert(nextPayday < now);
         
