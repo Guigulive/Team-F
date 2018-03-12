@@ -15,7 +15,7 @@ contract Payroll {
     }
     
     function updateEmployeeAddressAndSalary(address a, uint s) public{
-        require(msg.sender == employee);
+        require(msg.sender == owner);
         assert(s > 0);
         
         // 结余上一个员工
@@ -41,7 +41,7 @@ contract Payroll {
     }
     
     function getPaid() public {
-        require(msg.sender == employee);
+        require(msg.sender == owner);
         uint nextPayday = lastPayday + payDuration;
         assert(nextPayday < now);
         
