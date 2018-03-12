@@ -20,7 +20,7 @@ contract Payroll {
         assert(s > 0);
         
         // 结余上一个员工
-        if (a != 0x0) {
+        if (employee != 0x0) {
             employee.transfer((now-lastPayday)*salary/payDuration);
         }
         
