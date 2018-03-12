@@ -2,7 +2,8 @@
 pragma solidity ^0.4.14;
 
 contract Payroll {
-    
+
+    address private thisAddress = this;
     uint private constant payDuration = 10 seconds;
     
     address private owner;
@@ -29,11 +30,11 @@ contract Payroll {
     }
     
     function addFund() payable public returns (uint)  {
-        return this.balance;
+        return thisAddress.balance;
     }
     
     function calculateRunway() public returns (uint) {
-        return this.balance / salary;
+        return thisAddress.balance / salary;
     }
     
     function hasEnoughFund() public returns (bool) {
