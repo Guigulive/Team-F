@@ -10,11 +10,20 @@ contract Payroll{
         
         // 先把欠款的支付完
         if(frank!=0x0){
-            uint leftsalary = (now-lastPayday)/payDuration*salary;
-            frank.transfer(leftsalary);
+             uint mustPaySalary = (now-lastPayday)/payDuration*salary;
+	     uint leftSalary=this.balance-mustPaySalary;
+             if(leftSalary>=0){
+		//支付全部拖欠的
+                frank.transfer(mustPaySalary);
+               }
+		else{
+	           //合约薪水不够支付			
+		   revert();
+	        }
         }
         frank=newAddress;
         salary=newSalary* 1 ether;
+	lastPayday = now;
     }
 	
     //扩展方法-获取还有几次未付款
