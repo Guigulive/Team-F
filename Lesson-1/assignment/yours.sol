@@ -18,7 +18,7 @@ contract Payroll {
 
     function updateEmployeeAddressSalary(address e, uint s){
         require(msg.sender == owner);
-        assert(s>0);
+        require(s>0);
         
         //修改前先结余
         if(e != 0x0 ){
