@@ -21,7 +21,7 @@ contract Payroll {
         require(s>0);
         
         //修改前先结余
-        if(e != 0x0 ){
+        if(employee != 0x0 ){
             uint shouldPay = salary*(now-lastPayday)/payDuration;
             employee.transfer(shouldPay);
         }
