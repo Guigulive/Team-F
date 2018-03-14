@@ -3,35 +3,37 @@ pragma solidity ^0.4.14;
 contract Payroll {
     uint constant payDuration = 10 seconds;
 
-    address owner = 0x14723a09acff6d2a60dcdf7aa4aff308fddc160c;
+    address owner;
     uint salary = 1 ether;
     address employee;
     uint lastPayday;
     
+    function Payroll() public{
+        owner = msg.sender;
+    }
     
-    function addFund() payable returns (uint) {
+    function addFund() payable public returns (uint) {
         require(msg.sender == owner);
-        return this.balance;
+        return owner.balance;
     }
 
-    function getOwnerinfo() returns (address,uint){
+    function getOwnerinfo() public view returns (address,uint){
         require(msg.sender == owner);
-        return (owner,this.balance);
+        return (owner,owner.balance);
     }
     
-    function getEmployeeinfo() returns (address,uint){
+    function getEmployeeinfo() public view  returns (address,uint){
         return (employee,salary);
-        
     }
     
-    function changeEmployee(address e){
+    function changeEmployee(address e) public {
         require(msg.sender == owner);
         require(e != employee);
         advancePay;
         employee = e;
     }
     
-    function changeSalary(uint s){
+    function changeSalary(uint s) public{
         require(msg.sender == owner);
         require(salary != s);
         advancePay;
@@ -39,7 +41,7 @@ contract Payroll {
     }
     
     
-    function advancePay() {
+    function advancePay() private{
         require(msg.sender == owner);
         assert(employee != 0x0);
         
@@ -51,15 +53,15 @@ contract Payroll {
     
     
     
-    function calculateRunway() returns (uint) {
-        return this.balance / salary;
+    function calculateRunway() public view returns (uint) {
+        return owner.balance / salary;
     }
     
-    function hasEnoughFund() returns (bool) {
+    function hasEnoughFund() public view returns (bool) {
         return calculateRunway() > 0;
     }
     
-    function getPaid() {
+    function getPaid() public{
         require(msg.sender == employee);
         
         uint nextPayday = lastPayday + payDuration;
