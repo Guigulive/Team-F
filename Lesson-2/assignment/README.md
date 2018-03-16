@@ -36,4 +36,4 @@
  
  可以看到，在calculateRunway函数中，因为employees数组的长度不断增大，遍历这个数组所需要的gas也不断增大，所以需要把计算salary放在别的地方。
  
- 
+ 优化后的程序写在answer.sol
