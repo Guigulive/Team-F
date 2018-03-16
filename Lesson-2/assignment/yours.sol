@@ -1,5 +1,5 @@
 /*作业请提交在这个目录下*/
-
+  
 pragma solidity ^0.4.14;
 
 contract Payroll {
