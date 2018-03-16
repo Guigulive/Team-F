@@ -1,6 +1,7 @@
 pragma solidity ^0.4.14;
 
 contract Payroll {
+
     uint constant payDuration = 10 seconds;
 
     address owner;
