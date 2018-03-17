@@ -162,7 +162,7 @@ contract Payroll {
         assert(employee.id!=0x0);
         
         _partialPaid(employee);
-        totalSalary -= employees[index].salary* 1 ether;
+        totalSalary -= employees[index].salary;
         
         delete employees[index];
         employees[index]=employees[employees.length-1];
@@ -178,7 +178,7 @@ contract Payroll {
         assert(employee.id!=0x0);
         
         _partialPaid(employee);
-        totalSalary += (salary-employees[index].salary) * 1 ether;
+        totalSalary += (salary* 1 ether-employees[index].salary) ;
          
         employees[index].salary = salary * 1 ether;
         employees[index].lastPayday=now;
