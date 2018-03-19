@@ -1,5 +1,32 @@
-/*作业请提交在这个目录下*/
-  
+/*
+加入员工时，calculateRunway这个函数gas变化如下：
+
+transaction cost, execution cost
+
+22966 1694
+
+23747 2475
+
+23528 3256
+
+25309 4037
+
+26090 4818
+
+26871 5599
+
+27652 6380
+
+28433 7161
+
+29214 7942
+
+29995 8723
+
+可以看到，在calculateRunway函数中，因为employees数组的长度不断增大，遍历这个数组所需要的gas也不断增大，所以需要把计算salary放在别的地方。
+
+*/
+
 pragma solidity ^0.4.14;
 
 contract Payroll {
@@ -13,6 +40,7 @@ contract Payroll {
 
     address owner;
     Employee[] employees;
+    uint totalSalary =0;
 
     function Payroll() {
         owner = msg.sender;
@@ -36,13 +64,16 @@ contract Payroll {
         require(owner == msg.sender);
         var (employee,index) = _findEmployee(employeeId);
         assert(employee.id == 0x0);
+        totalSalary += salary* 1 ether;
         employees.push(Employee(employeeId, salary* 1 ether, now));
+        
     }
     
     function removeEmployee(address employeeId) {
         require(owner == msg.sender);
         var (employee,index) = _findEmployee(employeeId);
         assert(employee.id != 0x0);
+        totalSalary += employee.salary* 1 ether;
         _partialPaid(employee);
         delete employees[index];
         employees[index] = employees[employees.length-1];
@@ -54,7 +85,9 @@ contract Payroll {
         require(owner == msg.sender);
         var (employee,index) = _findEmployee(employeeId);
         assert(employee.id != 0x0);
+        totalSalary -= employee.salary* 1 ether;
         _partialPaid(employee);
+        totalSalary += salary * 1 ether;
         employee.lastPayday = now;
         employee.salary = salary;
     }
@@ -64,10 +97,6 @@ contract Payroll {
     }
     
     function calculateRunway() returns (uint) {
-        uint totalSalary = 0;
-      for (uint i = 0; i < employees.length; i++) {
-            totalSalary += employees[i].salary;
-        }
         return this.balance / totalSalary;
     }
     
