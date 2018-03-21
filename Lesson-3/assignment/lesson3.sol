@@ -154,16 +154,6 @@ contract Payroll{
         lastPayday = employee.lastPayday;
     }
     
-/*    function getPaid()
-    {
-        var employee = employees[msg.sender];
-        assert(employee.id!=0x0);
-        uint nextPayday = employee.lastPayday + payDuration;
-        assert(nextPayday<now);
-        employees[msg.sender].lastPayday = nextPayday;
-        employee.id.transfer(employee.salary);
-    }*/
-    
     function getPaid() employeeExist(msg.sender)
     {
         var employee = employees[msg.sender];
