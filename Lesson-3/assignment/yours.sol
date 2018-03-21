@@ -11,13 +11,20 @@ https://github.com/yyssjj33/Team-F/raw/53-%E6%9D%A8%E6%A5%AB/Lesson-3/assignment
 =========================================================================================
 第二题：增加 changePaymentAddress 函数，更改员工的薪水支付地址，思考一下能否使用modifier整合某个功能|
 =========================================================================================
-可以整合partialPaid函数到modifier
+可以整合partialPaid和employeeNonExist函数到modifier
+
 modifier partialPaid(employeeId) {
     _partialPaid(employees[employeeId]);
     _;
 }
+
+modifier employeeNonExist(address employeeId) {
+    var employee = employees[employeeId];
+    assert(employee.id == 0x0);
+    _;
+}
     
-function changePaymentAddress(address oldAddress, address newAddress) onlyOwner employeeExist(oldAddress) partialPaid(oldAddress) {
+function changePaymentAddress(address oldAddress, address newAddress) onlyOwner employeeExist(oldAddress)employeeNonExist(newAddress) partialPaid(oldAddress) {
     var employee = employees[oldAddress];
     var newEmployee = Employee(newAddress, employee.salary * 1 ether, now);
     delete employees[oldAddress];
@@ -64,15 +71,20 @@ contract Payroll {
         _;
     }
     
+    modifier employeeNonExist(address employeeId) {
+        var employee = employees[employeeId];
+        assert(employee.id == 0x0);
+        _;
+    }
+    
     function _partialPaid(Employee employee) private {
         if (employee.id != 0x0) {
             employee.id.transfer((now-employee.lastPayday)*employee.salary/payDuration);
         }
     }
     
-    function addEmployee(address employeeId, uint salary) onlyOwner {
+    function addEmployee(address employeeId, uint salary) onlyOwner employeeNonExist(employeeId){
         var employee = employees[employeeId];
-        assert(employee.id == 0x0);
         employees[employeeId] = Employee(employeeId, salary * 1 ether, now);
         totalSalary += salary * 1 ether;
     }
@@ -92,7 +104,7 @@ contract Payroll {
         employees[employeeId].lastPayday = now;
     }
     
-    function changePaymentAddress(address oldAddress, address newAddress) onlyOwner employeeExist(oldAddress) partialPaid(oldAddress){
+    function changePaymentAddress(address oldAddress, address newAddress) onlyOwner employeeExist(oldAddress) employeeNonExist(newAddress) partialPaid(oldAddress){
         var employee = employees[oldAddress];
         var newEmployee = Employee(newAddress, employee.salary * 1 ether, now);
         delete employees[oldAddress];
@@ -151,21 +163,21 @@ L[C] = C + merge(L[O], O) = C + merge(O, O) = CO
 L[B] = B + merge(L[O], O) = B + merge(O, O) = BO
 L[A] = A + merge(L[O], O) = A + merge(O, O) = AO
 
-L[K2] = K2 + merge(L[C], L[B], CB)
-      = K2 + merge(CO, BO, CB)
-      = K2 + C + merge(O, BO, B)
-      = K2 + C + B + mergeO, O)
-      = K2CBO
+L[K2] = K2 + merge(L[C], L[A], CA)
+      = K2 + merge(CO, AO, CA)
+      = K2 + C + merge(O, AO, A)
+      = K2 + C + A + mergeO, O)
+      = K2CAO
 同理
-L[K1] = K1CAO
+L[K2] = K1BAO
 
 L[Z] = Z + merge(L[K2], L[K1], K2K1)
-     = Z + merge(K2CBO, K1BAO, K2K1)
-     = Z + K2 + merge(CBO, K1BAO, K1)
-     = Z + K2 + K1 + merge(CBO, CAO)
-     = Z + K2 + K1 + C + merge(BO, AO)
-     = Z + K2 + K1 + C + B + merge(O, AO)
-     = Z + K2 + K1 + C + B + A + merge(O, O)
-     = Z + K2 + K1 + C + B + A + O
-     = ZK2K1CBAO
-L[Z] = ZK2K1CBAO
+     = Z + merge(K2CAO, K1BAO, K2K1)
+     = Z + K2 + merge(CAO, K1BAO, K1)
+     = Z + K2 + C + merge(BO, K1BAO, K1)
+     = Z + K2 + C + K1 + merge(BO, AO)
+     = Z + K2 + C + K1 + B + merge(O, AO)
+     = Z + K2 + C + K1 + B + A + merge(O, O)
+     = Z + K2 + C + K1 + B + A + O
+     = ZK2CK1BAO
+L[Z] = ZK2CK1BAO
