@@ -1,10 +1,9 @@
 /*作业请提交在这个目录下*/
-
 pragma solidity ^0.4.14;
 
 contract Payroll{
     
-    uint constant payDuration  = 10 seconds;
+    uint constant payDuration  = 2 seconds;
     address owner;
     uint salary;
     address employee;
@@ -15,7 +14,7 @@ contract Payroll{
     }
     
     function updateEmployee(address e,uint s){
-        require(msg.sender==owner);
+        
         if (employee != 0x0)
         {
             uint payment = salary * (now - lastPayday)/payDuration;
@@ -43,11 +42,16 @@ contract Payroll{
     
     function getPaid()
     {
-        require(msg.sender == employee);
-        uint nextPayDay=lastPayday+payDuration;
-        assert(nextPayDay<now);
-        lastPayday=nextPayDay;
+        if(msg.sender != employee)
+        {
+            revert();
+        }
+        
+        uint nextPayday = lastPayday+payDuration;
+        if(nextPayday>now){
+            revert();
+        }
+        lastPayday = nextPayday;
         employee.transfer(salary);
     }
-    
 }
