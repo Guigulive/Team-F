@@ -73,7 +73,7 @@ contract Payroll {
         require(owner == msg.sender);
         var (employee,index) = _findEmployee(employeeId);
         assert(employee.id != 0x0);
-        totalSalary += employee.salary* 1 ether;
+        totalSalary -= employee.salary* 1 ether;
         _partialPaid(employee);
         delete employees[index];
         employees[index] = employees[employees.length-1];
