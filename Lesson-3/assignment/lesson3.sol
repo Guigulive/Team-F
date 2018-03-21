@@ -44,6 +44,14 @@ contract Payroll is Ownable {
         assert(employee.id == 0x0);
         _;
     }
+    
+    //检查是否到达结算周期
+    modifier moreThanpayDuration(address employeeId){
+        Employee storage employee = employees[employeeId];
+        uint nextPayday = employee.lastPayday.add(payDuration);
+        assert(nextPayday < now);
+        _;
+    }
 
  
     //临时结算工资
@@ -83,10 +91,11 @@ contract Payroll is Ownable {
         employees[employeeId].lastPayday = now;
     }
     
-    //由员工自己更换员工地址
-    function changePaymentAddress(address employeeId) public  employeeExist(msg.sender) employeeNonExist(employeeId){
+    //由员工自己更换员工地址，需要满足一个付款周期
+    function changePaymentAddress(address employeeId) public  employeeExist(msg.sender) employeeNonExist(employeeId) moreThanpayDuration(employeeId){
         Employee storage employee = employees[msg.sender];
         _partialPaid(employee);
+        
         employees[employeeId] = Employee(employeeId,employee.salary,now);
         delete employees[msg.sender];
     }
@@ -123,11 +132,10 @@ contract Payroll is Ownable {
     }
     
     //员工向合约申请工资,含账号地址验证
-    function getPaid() public  employeeExist(msg.sender){
+    function getPaid() public  employeeExist(msg.sender) moreThanpayDuration(msg.sender){
         Employee storage employee = employees[msg.sender];
         
         uint nextPayday = employee.lastPayday.add(payDuration);
-        assert(nextPayday < now);
 
         employees[msg.sender].lastPayday = nextPayday;
         employee.id.transfer(employee.salary);
