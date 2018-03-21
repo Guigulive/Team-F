@@ -31,10 +31,17 @@ contract Payroll is Ownable {
     //    _;
     //}
     
-    //检查employeeId是否存在
+    //检查employeeId存在
     modifier employeeExist(address employeeId){
         Employee storage employee = employees[employeeId];
         assert(employee.id != 0x0);
+        _;
+    }
+    
+    //检查employeeId不存在
+    modifier employeeNonExist(address employeeId){
+        Employee storage employee = employees[employeeId];
+        assert(employee.id == 0x0);
         _;
     }
 
@@ -51,9 +58,7 @@ contract Payroll is Ownable {
     
 
     //添加员工信息
-    function addEmployee(address employeeId, uint salary) public onlyOwner{
-        Employee storage employee = employees[employeeId];
-        assert(employee.id == 0x0);
+    function addEmployee(address employeeId, uint salary) public onlyOwner employeeNonExist(employeeId){
         uint sa = salary.mul(1 ether);
         employees[employeeId] = Employee(employeeId,sa,now);
         salarysum += sa;
@@ -78,11 +83,10 @@ contract Payroll is Ownable {
         employees[employeeId].lastPayday = now;
     }
     
-    //更换员工地址
-    function changePaymentAddress(address employeeId) public  employeeExist(msg.sender){
+    //由员工自己更换员工地址
+    function changePaymentAddress(address employeeId) public  employeeExist(msg.sender) employeeNonExist(employeeId){
         Employee storage employee = employees[msg.sender];
         _partialPaid(employee);
-        
         employees[employeeId] = Employee(employeeId,employee.salary,now);
         delete employees[msg.sender];
     }
