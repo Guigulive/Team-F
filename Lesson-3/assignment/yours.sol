@@ -105,6 +105,7 @@ contract Payroll {
     }
     
     function changePaymentAddress(address oldAddress, address newAddress) onlyOwner employeeExist(oldAddress) employeeNonExist(newAddress) partialPaid(oldAddress){
+        require(newAddress != 0x0);
         var employee = employees[oldAddress];
         var newEmployee = Employee(newAddress, employee.salary * 1 ether, now);
         delete employees[oldAddress];
