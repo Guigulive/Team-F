@@ -201,4 +201,4 @@ contract Payroll {
 - contract C is O
 - contract K1 is A, B
 - contract K2 is A, C
-- contract Z is K1, K2
+- contract Z is K1, K2 
