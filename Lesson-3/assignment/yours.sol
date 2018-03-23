@@ -18,11 +18,16 @@ contract Payroll is Ownable{
     
     modifier employeeExist(address employeeId) {
         var employee = employees[employeeId];
-        assert(employee.id!=0x0);
+        assert(employee.id != 0x0);
         _;
     }
     
-    // Add a new modifier: partialPaid. Use it in updateEmployee, removeEmployee function
+    modifier employeeNonExist(address employeeId) {
+        var employee = employees[employeeId];
+        assert(employee.id == 0x0);
+        _;
+    }
+    
     modifier partialPaid(address employeeId){
         var employee = employees[employeeId];
         _partialPaid(employee);
@@ -36,10 +41,7 @@ contract Payroll is Ownable{
         employee.id.transfer(payment);
     }
     
-    function addEmployee(address employeeId, uint salary) onlyOwner {
-        var employee = employees[employeeId];
-        assert(employee.id == 0x0);
-        
+    function addEmployee(address employeeId, uint salary) onlyOwner employeeNonExist(employeeId){
         totalSalary += salary * 1 ether;
         employees[employeeId] = Employee(employeeId,salary * 1 ether,now);
     }
@@ -58,11 +60,10 @@ contract Payroll is Ownable{
         employees[employeeId].lastPayday = now;
     }
     
-    //add a new address first, then remove the old one (the removeEmployee function has partially paid the employee)
-    function changePaymentAddress(address oldAddress, address newAddress) onlyOwner 
-    employeeExist(oldAddress) {
-        addEmployee(newAddress, employees[oldAddress].salary.div(1 ether));
-        removeEmployee(oldAddress);
+    function changePaymentAddress(address newAddress) employeeExist(msg.sender) employeeNonExist(newAddress){
+        var oldEmployee = employees[msg.sender];
+        employees[newAddress] = Employee(newAddress, oldEmployee.salary, oldEmployee.lastPayday);
+        delete employees[msg.sender];
     } 
     
     function addFund() payable returns (uint) {
