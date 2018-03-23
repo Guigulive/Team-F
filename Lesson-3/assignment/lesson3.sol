@@ -40,6 +40,7 @@ contract Payroll is Ownable {
     
     //检查employeeId不存在
     modifier employeeNonExist(address employeeId){
+        assert(employeeId != 0x0);
         Employee storage employee = employees[employeeId];
         assert(employee.id == 0x0);
         _;
