@@ -1,4 +1,3 @@
-/*作业请提交在这个目录下*/
 var Payroll = artifacts.require("./Payroll.sol");
 
 contract('Payroll', function(accounts) {
@@ -74,7 +73,8 @@ contract('Payroll', function(accounts) {
       await instance.addFund({from: owner, value: web3.toWei(initialDeposit, "ether")});
       await instance.addEmployee(employeeId, 1, {from: owner});
       const beforeBalance = getBalance(employeeId);
-      await timeout(waitTime);  
+      // await timeout(waitTime);
+      web3.currentProvider.send({jsonrpc: "2.0", method: "evm_increaseTime", params: [waitTime/1000], id: 0});  
       await instance.removeEmployee(employeeId, {from: owner});
       const afterBalance = getBalance(employeeId);
       // console.log(afterBalance);
@@ -103,8 +103,8 @@ contract('Payroll', function(accounts) {
       await instance.addEmployee(employeeId, 1, {from: owner});
       const oldBalance = getBalance(employeeId);
       
-      await timeout(6000);
-
+      // await timeout(6000);
+      web3.currentProvider.send({jsonrpc: "2.0", method: "evm_increaseTime", params: [6], id: 0});
       await instance.getPaid({from: employeeId});
       const newBalance = getBalance(employeeId);
       assert.equal(Math.round(web3.fromWei(newBalance-oldBalance, "ether")), 1);
@@ -117,8 +117,8 @@ contract('Payroll', function(accounts) {
       let employee = await instance.employees(employeeId);
       const previousPayTimestamp = employee[2].toNumber();
     
-      await timeout(6000);
-      
+      // await timeout(6000);
+      web3.currentProvider.send({jsonrpc: "2.0", method: "evm_increaseTime", params: [6], id: 0});
       await instance.getPaid({from: employeeId});
       employee = await instance.employees(employeeId);
       const newPayTimestamp = employee[2].toNumber();
