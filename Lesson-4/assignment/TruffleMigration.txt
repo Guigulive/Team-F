@@ -21,3 +21,26 @@ Running migration: 2_deploy_contracts.js
 Saving successful migration to network...
   ... 0xa611f1b920e909fb8ce0a8d51660ea9ffe885d6922f497da88b6d3c99ca27ad1
 Saving artifacts...
+
+
+
+
+Transaction: 0xcdf6f89d8a437a3fe41c96fa247879fc38e34acf22433b23a40c2f45e81f1740
+  Contract created: 0x91f8698a1674605c57cb49dfce1c45daa9435407
+  Gas usage: 1179413
+  Block Number: 5
+  Block Time: Sun Mar 25 2018 12:51:53 GMT+0000 (UTC)
+
+eth_newBlockFilter
+eth_getFilterChanges
+eth_getTransactionReceipt
+eth_getCode
+eth_uninstallFilter
+eth_sendTransaction
+
+  Transaction: 0xa611f1b920e909fb8ce0a8d51660ea9ffe885d6922f497da88b6d3c99ca27ad1
+  Gas usage: 26981
+  Block Number: 6
+  Block Time: Sun Mar 25 2018 12:51:53 GMT+0000 (UTC)
+
+eth_getTransactionReceipt
