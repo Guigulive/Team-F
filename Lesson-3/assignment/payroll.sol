@@ -1,7 +1,7 @@
 pragma solidity ^0.4.14;
 import './SafeMath.sol';
 
-contract Payrool {
+contract Payroll {
     
     using SafeMath for uint;
     
@@ -24,7 +24,7 @@ contract Payrool {
        require(employee.employeeAddress != 0x0);
        _;
    }
-   function Payrool() payable{
+   function Payroll() payable{
        ownerAddress = msg.sender;
    }
    function _partialPay(Employee emp) private{
