@@ -99,15 +99,16 @@ contract('Payroll', function(accounts) {
     });
 
     it("should getPaid", async () => {
+      const salary = 1;
       await instance.addFund({from: owner, value: web3.toWei(initialDeposit, "ether")});
-      await instance.addEmployee(employeeId, 1, {from: owner});
+      await instance.addEmployee(employeeId, salary, {from: owner});
       const oldBalance = getBalance(employeeId);
       
       // await timeout(6000);
       web3.currentProvider.send({jsonrpc: "2.0", method: "evm_increaseTime", params: [6], id: 0});
       await instance.getPaid({from: employeeId});
       const newBalance = getBalance(employeeId);
-      assert.equal(Math.round(web3.fromWei(newBalance-oldBalance, "ether")), 1);
+      assert.equal(Math.round(web3.fromWei(newBalance-oldBalance, "ether")), salary);
     });
 
     it("should update lastPayday", async () => {
