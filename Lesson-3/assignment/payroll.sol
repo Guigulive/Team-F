@@ -1,7 +1,8 @@
 pragma solidity ^0.4.14;
 import './SafeMath.sol';
+import './Ownable.sol';
 
-contract Payroll {
+contract Payroll is Ownable{
     
     using SafeMath for uint;
     
@@ -15,18 +16,13 @@ contract Payroll {
    address ownerAddress;
    uint totalSalary = 0;
    
-   modifier onlyOwner{
-       require(ownerAddress == msg.sender);
-       _;
-   }
+   
    modifier employeeExist(address addr){
        var employee = employeeMapping[addr];
        require(employee.employeeAddress != 0x0);
        _;
    }
-   function Payroll() payable{
-       ownerAddress = msg.sender;
-   }
+   
    function _partialPay(Employee emp) private{
        uint totalSalary = emp.salary.mul(now.sub(emp.lastPayday)).div(payDuration);
        
@@ -42,7 +38,7 @@ contract Payroll {
    function removeEmployee(address addr) onlyOwner employeeExist(addr){
        var employee = employeeMapping[addr];
        totalSalary = totalSalary.sub(employee.salary);
-       _partialPay(addr);
+       _partialPay(employee);
        delete(employeeMapping[addr]);
       
    }
