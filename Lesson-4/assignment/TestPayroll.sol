@@ -10,7 +10,7 @@ contract TestPayroll  is Payroll{
 
   function testAddEmployee(address addr,uint sal) public {
 
-        addEmplyee(addr,sal);
+        addEmployee(addr,sal);
 
     Assert.equal(employeeMapping[addr].salary, sal, "添加失败");
   }
