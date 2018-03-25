@@ -106,9 +106,9 @@ contract('Payroll', function(accounts) {
       
       // await timeout(6000);
       web3.currentProvider.send({jsonrpc: "2.0", method: "evm_increaseTime", params: [6], id: 0});
-      await instance.getPaid({from: employeeId});
+      await instance.getPaid({from: employeeId, gasPrice: 0});
       const newBalance = getBalance(employeeId);
-      assert.equal(Math.round(web3.fromWei(newBalance-oldBalance, "ether")), salary);
+      assert.equal(web3.fromWei(newBalance-oldBalance, "ether"), salary);
     });
 
     it("should update lastPayday", async () => {
