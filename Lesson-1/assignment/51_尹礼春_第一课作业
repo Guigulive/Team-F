@@ -1,0 +1,82 @@
+pragma solidity ^0.4.14;
+
+contract Payroll {
+    uint constant payDuration = 10 seconds;
+
+    address owner;
+    uint salary = 1 ether;
+    address employee;
+    uint lastPayday;
+    
+    //初始化，设置owner,lastPayday
+    function Payroll() public{
+        owner = msg.sender;
+        lastPayday = now;
+    }
+    
+    //向合约中打款
+    function addFund() payable public returns (uint) {
+        require(msg.sender == owner);
+        return owner.balance;
+    }
+
+    //获取合约的信息，地址和余额
+    function getOwnerinfo() public view returns (address,uint){
+        require(msg.sender == owner);
+        return (owner,owner.balance);
+    }
+    
+    //获取员工信息，地址和工资
+    function getEmployeeinfo() public view  returns (address,uint){
+        return (employee,salary);
+        
+    }
+    
+    //修改员工地址
+    function changeEmployee(address e) public {
+        require(msg.sender == owner);
+        require(e != employee);
+        advancePay();
+        employee = e;
+    }
+    
+    //修改员工工资
+    function changeSalary(uint s) public{
+        require(msg.sender == owner);
+        require(salary != s);
+        advancePay();
+        salary = s * 1 ether;
+    }
+    
+    //临时结算工资
+    function advancePay() private{
+        require(msg.sender == owner);
+        if (employee != 0x0){
+            uint payment = salary * (now - lastPayday) / payDuration;
+            employee.transfer(payment);
+            lastPayday = now;
+        }
+    }    
+    
+    
+    //计算合约的余额能支付多少次工资
+    function calculateRunway() public view returns (uint) {
+        return owner.balance / salary;
+    }
+    
+    //确认当前余额能否支付下一次工资
+    function hasEnoughFund() public view returns (bool) {
+        return calculateRunway() > 0;
+    }
+    
+    //员工向合约申请工资,含账号地址验证
+    function getPaid() public{
+        require(msg.sender == employee);
+        
+        uint nextPayday = lastPayday + payDuration;
+        assert(nextPayday < now);
+
+        lastPayday = nextPayday;
+        employee.transfer(salary);
+    }
+}
