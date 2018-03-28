@@ -21,9 +21,9 @@ class Employer extends Component {
       from: account
     }).then((result) => {
       this.setState({
-        owner: result
+        owner: result    
       });
-    })
+    });
   }
 
   onSelectTab = ({key}) => {
