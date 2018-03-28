@@ -1,52 +1,73 @@
 import React, { Component } from 'react'
-import { Form, InputNumber, Button } from 'antd';
+import { Layout, Menu, Alert } from 'antd';
 
-import Common from './Common';
+import Fund from './Fund';
+import EmployeeList from './EmployeeList';
 
-const FormItem = Form.Item;
+const { Content, Sider } = Layout;
 
-class Fund extends Component {
+class Employer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      mode: 'fund'
+    };
   }
 
-  handleSubmit = (ev) => {
-    ev.preventDefault();
-    const { payroll, account, web3 } = this.props;
-    payroll.addFund({
-      from: account,
-      value: web3.toWei(this.state.fund)
+  componentDidMount() {
+    const { account, payroll } = this.props;
+    payroll.owner.call({
+      from: account
+    }).then((result) => {
+      this.setState({
+        owner: result    
+      });
     });
   }
 
-  render() {
-    const { account, payroll, web3 } = this.props;
-    return (
-      <div>
-        <Common account={account} payroll={payroll} web3={web3} />
+  onSelectTab = ({key}) => {
+    this.setState({
+      mode: key
+    });
+  }
 
-        <Form layout="inline" onSubmit={this.handleSubmit}>
-          <FormItem>
-            <InputNumber
-              min={1}
-              onChange={fund => this.setState({fund})}
-            />
-          </FormItem>
-          <FormItem>
-            <Button
-              type="primary"
-              htmlType="submit"
-              disabled={!this.state.fund}
-            >
-              增加资金
-            </Button>
-          </FormItem>
-        </Form>
-      </div>
+  renderContent = () => {
+    const { account, payroll, web3 } = this.props;
+    const { mode, owner } = this.state;
+
+    if (owner !== account) {
+      return <Alert message="你没有权限" type="error" showIcon />;
+    }
+
+    switch(mode) {
+      case 'fund':
+        return <Fund account={account} payroll={payroll} web3={web3} />
+      case 'employees':
+        return <EmployeeList account={account} payroll={payroll} web3={web3} />
+    }
+  }
+
+  render() {
+    return (
+      <Layout style={{ padding: '24px 0', background: '#fff'}}>
+        <Sider width={200} style={{ background: '#fff' }}>
+          <Menu
+            mode="inline"
+            defaultSelectedKeys={['fund']}
+            style={{ height: '100%' }}
+            onSelect={this.onSelectTab}
+          >
+            <Menu.Item key="fund">合约信息</Menu.Item>
+            <Menu.Item key="employees">雇员信息</Menu.Item>
+          </Menu>
+        </Sider>
+        <Content style={{ padding: '0 24px', minHeight: 280 }}>
+          {this.renderContent()}
+        </Content>
+      </Layout>
     );
   }
 }
 
-export default Fund
+export default Employer
