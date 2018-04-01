@@ -1,0 +1,16 @@
+.logo{
+    color: white;
+    float: left;
+    font-size: 20px;
+    line-height: 63px;
+    margin-right: 10px;
+}
+
+.ant-card{
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.ant-menu-horizontal {
+    line-height: 64px;
+}
