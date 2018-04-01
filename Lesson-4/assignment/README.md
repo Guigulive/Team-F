@@ -10,3 +10,10 @@
 - (加分题,选作）
 - 写出对以下函数的基于solidity或javascript的单元测试 function getPaid() employeeExist(msg.sender)
 - Hint：思考如何对timestamp进行修改，是否需要对所测试的合约进行修改来达到测试的目的？
+
+
+### 回答
+
+测试的文件在payroll/Test/payroll.js中
+
+测试结果的截图![](./answer.png) 
